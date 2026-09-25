@@ -10,6 +10,9 @@ on:
 
 jobs:
   build:
+      permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
 
     steps:
@@ -27,5 +30,13 @@ jobs:
 
       - name: Build React application
         run: npm run build
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+  with:
+    registry: ghcr.io
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
-        run: docker build -t assured-finance .
+        run: docker build -t ghcr.io/abhinavjain132-sudo/assured-finance:latest .
+      - name: Push Docker image
+        run: docker push ghcr.io/abhinavjain132-sudo/assured-finance:latest
